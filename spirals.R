@@ -1,3 +1,11 @@
+##crochet theme
+crochet_theme <- theme(panel.grid = element_blank(), 
+                       panel.background = element_rect(fill = "#D8D8D8"),
+                       axis.text = element_blank(), 
+                       axis.ticks = element_blank(), 
+                       axis.title = element_blank(),
+                       legend.position = "none")
+
 ##plotting circles
 
 circle_points = function(center = c(0, 0), radius = 1, npoints = 360) {
@@ -6,24 +14,39 @@ circle_points = function(center = c(0, 0), radius = 1, npoints = 360) {
                     y = center[2] + radius * sin(angles)))
 }
 
-circle1 <- circle_points(radius = 1, npoints = 60)
-circle2 <- circle_points(radius = 2, npoints = 120)
-cirquez <- rbind(circle1, circle2)
+stitches <- c(6, 12, 18, 24, 30, 36, 42, 48,
+              54, 60, 66, 72)
+make_circles <- function(stitchcounts) {
+  circlez <- data.frame()
+  for(i in 1:length(stitchcounts)) {
+    newcircle <- circle_points(radius = i, npoints = stitchcounts[i])
+    circlez <- rbind(circlez, newcircle)
+  }
+  return(circlez)
+}
 
-ggplot() + geom_point(data = cirquez, aes(x = x, y = y), color = "#DF01D7", size = 3) +
-  theme(panel.grid = element_blank(), panel.background = element_rect(fill = "#F7F8E0"),
-        axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
+circle0 <- make_circles(stitches)
+
+
+ggplot() + geom_point(data = circle0, 
+                      aes(x = x, y = y), 
+                      color = "#DF01D7", size = 3) +
+  theme(panel.grid = element_blank(), 
+        panel.background = element_rect(fill = "#F7F8E0"),
+        axis.text = element_blank(), 
+        axis.ticks = element_blank(), 
+        axis.title = element_blank(),
         legend.position = "none")
 
 
 ##plotting spirals
-spiral_points <- function(a = 2, b = 3, n){
-  theta <- seq(0,10*pi,0.03)
+spiral_points <- function(a = 1, b = 1, n){
+  theta <- seq(0,n*pi,0.03)
   r <- a + b * theta
   df <- data.frame(x = r*cos(theta), y = r*sin(theta))
   return(df)
 }
-
+## evenly spaced points on a spiral
 spiral_points1 <- function(arc = 1, separation = 1, n) {
   r <- arc
   b <- separation / (2*pi)
@@ -42,24 +65,14 @@ spiral_points1 <- function(arc = 1, separation = 1, n) {
 
 
 spiral1 <- spiral_points1(n = 468)
-  
+
 ggplot(spiral1, aes(x,y)) + geom_point(color = "#6A0888", 
                                        size = 10, shape = 18) +
-  theme(panel.grid = element_blank(), 
-        panel.background = element_rect(fill = "#D8D8D8"),
-        axis.text = element_blank(), 
-        axis.ticks = element_blank(), 
-        axis.title = element_blank(),
-        legend.position = "none")
+  crochet_theme
 
 
-spiral2 <- spiral_points(n = 468)
+spiral2 <- spiral_points(n = 4)
 
 ggplot(spiral2, aes(x,y)) + geom_point(color = "#6A0888", 
                                        size = 10, shape = 18) +
-  theme(panel.grid = element_blank(), 
-        panel.background = element_rect(fill = "#D8D8D8"),
-        axis.text = element_blank(), 
-        axis.ticks = element_blank(), 
-        axis.title = element_blank(),
-        legend.position = "none")
+  crochet_theme
