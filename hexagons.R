@@ -167,3 +167,66 @@ ggplot(newhex2, aes(x = x, y = y, col = hexion, alpha = rnd2)) +
   scale_alpha(range = c(0.5, 1.0))
 
 
+##new patternz
+hex_points3 <- function(n, distance = 0.5) {
+  sides <- 6
+  t <- 0.1
+  r <- t * (sqrt(3) / 2)
+  x <- c(0)
+  y <- c(0)
+  rnd <- c(0)
+  pos <- c(0)
+  hexion <- c(0)
+  for(i in 1:n) {
+    rnd <- c(rnd, rep(i, i*sides))
+    pos <- c(pos, 1:(i*sides))
+    new_rnd <- i %% 3
+    if(new_rnd == 0) {
+      col_order <- c(1, 2, 3)
+    } else if(new_rnd == 1) {
+      col_order <- c(2, 3, 1)
+    } else if(new_rnd == 2) {
+      col_order <- c(3, 1, 2)
+    }
+    col_order <- rep(col_order, times = 2)
+    new_hexion <- rep(col_order, each = i)
+    hexion <- c(hexion, new_hexion[-1], new_hexion[1])
+    for(j in 1:sides) {
+      xx <- c(0, r, r, 0, -(r), -(r), 0)
+      yy <- c(t, (t / 2), -(t / 2), -(t), -(t / 2), (t / 2), t)
+      newx <- seq(xx[j], xx[j+1], length.out = i+1)
+      newy <- seq(yy[j], yy[j+1], length.out = i+1)
+      x <- c(x, newx[-1])
+      y <- c(y, newy[-1])
+    }
+    t <- t + distance / sides
+    r <- t * (sqrt(3) / 2)
+  }
+  stitch <- 0:(length(x)-1)
+  return(data.frame(cbind(stitch, x, y, rnd, pos, hexion)))
+  #return(hexion)
+}
+
+
+hexes <- hex_points3(12)
+newhex2 <- hexes %>%
+  mutate(rnd2 = ifelse(rnd %% 2 == 0, 1, 0.8))
+
+newhex2$rnd <- factor(newhex2$rnd)
+
+newhex2$pos <- factor(newhex2$pos)
+newhex2$hexion <- factor(newhex2$hexion)
+#newhex2$rnd2 <- factor(newhex2$rnd2)
+
+hexPalette0 <- c( "#8ffb65", "#ff55f8", "#428789")
+
+hexPalette <- c("black", rep(hexPalette0, 2))
+hexPalette0NY <- c("#D5DBDB", "#33BBFF", "#FFA533")
+hexPaletteNY <- c("black", rep(hexPalette0NY, 2))
+
+ggplot(newhex2, aes(x = x, y = y, col = hexion)) + 
+  geom_point(size = 10) + scale_colour_manual(values=hexPaletteNY) +
+  crochet_theme  
+
+ord <- c(1, 2, 3)
+rep(ord, each = 3)
